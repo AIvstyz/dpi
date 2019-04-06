@@ -3,9 +3,14 @@
 
 #define DPI_ERR_BUFF_SIZE 256
 
+#define DPI_LOG_DEBUG(...)  do{fprintf(stderr,__VA_ARGS__);}while(0)
+#define DPI_LOG_INFO(...)  do{fprintf(stderr,__VA_ARGS__);}while(0)
+#define DPI_LOG_ERROR(...)  do{fprintf(stderr,__VA_ARGS__);}while(0)
+
 //定义dpi接口的头文件
 typedef struct dpi_result
 {
+    void *pcap_handle;     //pcap句柄的指针
     uint32_t ether_count;  //以太网报文数量
     uint32_t ip_count;     //ip报文的数量
     uint32_t tcp_count;    //tcp报文的数量
@@ -32,14 +37,6 @@ int dpi_pcap_analyze(dpi_result *handle);
 //handle ：就是dpi_init 拿到的句柄
 void dpi_free(dpi_result *handle);
 
-//    //1 打开pcap文件
-//    char errbuf[PCAP_ERRBUF_SIZE]={0}; 
-//    pcap_t *pcap = pcap_open_offline(argv[1],errbuf);
-//    if(pcap==NULL)
-//    {
-//        fprintf(stderr,"Error in pcap open : %s\n",errbuf);
-//        return -1;
-//    }
 //
 //    //3 业务处理（循环去读取每一个报文的packet header）
 //    //回调函数地址

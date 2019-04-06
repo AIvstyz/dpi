@@ -13,6 +13,18 @@ void usage(const char* argv0)
     fprintf(stderr,"usage : %s <pcap file>\n",argv0);
 }
 
+
+void displayResult(dpi_result *res)
+{
+    printf("============================================\n");
+    printf("ether packet count:\t%d\n",res->ether_count);
+    printf("ip packet count:\t%d\n",res->ip_count);
+    printf("tcp packet count:\t%d\n",res->tcp_count);
+    printf("udp packet count:\t%d\n",res->udp_count);
+    printf("ssh packet count:\t%d\n",res->ssh_count);
+    printf("============================================\n");
+}
+
 int main(int argc , char **argv)
 {
     if(argc!=2) 
@@ -24,6 +36,7 @@ int main(int argc , char **argv)
     //1 初始化的接口
     char errbuf[DPI_ERR_BUFF_SIZE];
     memset(errbuf,0,sizeof(errbuf));
+    //handle既是句柄也是最终的结果集
     dpi_result *handle = dpi_init(argv[1],errbuf);
     if(!handle)
     {
@@ -37,6 +50,11 @@ int main(int argc , char **argv)
     {
         fprintf(stderr,"Error in dpi_pcap_analyze\n");
         return -1;
+    }
+    else
+    {
+        //输出处理结果，打印报文的数量
+        displayResult(handle);
     }
 
     //3 释放的接口
