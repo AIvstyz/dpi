@@ -37,15 +37,15 @@ int main(int argc , char **argv)
     char errbuf[DPI_ERR_BUFF_SIZE];
     memset(errbuf,0,sizeof(errbuf));
     //handle既是句柄也是最终的结果集
-    dpi_result *handle = dpi_init(argv[1],errbuf);
-    if(!handle)
+    dpi_result *res = dpi_init(argv[1],errbuf);
+    if(!res)
     {
         //错误处理
         fprintf(stderr,"Error in dpi_init : %s\n",errbuf);
         return -1;
     }
     //2 业务处理的接口
-    int ret = dpi_pcap_analyze(handle);
+    int ret = dpi_pcap_analyze(res);
     if(ret!=0)
     {
         fprintf(stderr,"Error in dpi_pcap_analyze\n");
@@ -54,10 +54,10 @@ int main(int argc , char **argv)
     else
     {
         //输出处理结果，打印报文的数量
-        displayResult(handle);
+        displayResult(res);
     }
 
     //3 释放的接口
-    dpi_free(handle);
+    dpi_free(res);
     return 0;
 }

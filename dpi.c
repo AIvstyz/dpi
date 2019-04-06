@@ -36,10 +36,10 @@ dpi_result *dpi_init(const char *pcap_file,char *errbuf)
 //业务处理接口，分析每个报文
 //handle ：就是dpi_init 拿到的句柄
 //返回值，成功返回0，失败返回非0
-int dpi_pcap_analyze(dpi_result *handle)
+int dpi_pcap_analyze(dpi_result *res)
 {
     //遍历pcap文件去识别和统计报文
-    int res = pcap_loop(handle->pcap_handle,-1,dpi_pcap_callback,NULL);
+    int ret = pcap_loop(res->pcap_handle,-1,dpi_pcap_callback,(u_char*)res);
     return 0;
 }
 
@@ -55,10 +55,38 @@ void dpi_free(dpi_result *res)
     free(res);
 }
 
-
 //pcap回调函数的实现
 void dpi_pcap_callback(u_char *user,const struct pcap_pkthdr *header,
         const u_char *data)
 {
-    DPI_LOG_DEBUG("dpi_pcap_callback\n");
+    dpi_result *res = (dpi_result*)user;
+    //每次进来就添加一个以太网报文数量
+    res->ether_count++;
+
+    dpi_pkt pkt;
+    memset(&pkt,0,sizeof(pkt));
+
+    if(header->caplen!=header->len)
+    {
+        //如果caplen和len不相等，返回
+        return;
+    }
+
+    //标记以太网报文的起始位置
+    pkt.ether_pkt=(const struct ehter_header*)data; 
+    pkt.ether_len = header->caplen;
+
+    //判断是否是ip报文
+    if(pkt.ether_pkt->ether_type == htons(ETHERTYPE_IP)) //0x0800
+    {
+        //是ip报文
+        //统计ip报文的数量
+        res->ip_count++;
+        //解析ip报文
+    }
+    else
+    {
+        //不是ip报文
+    }
+
 }
