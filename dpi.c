@@ -4,6 +4,9 @@
 #include <string.h>
 #include <pcap/pcap.h>
 
+//定义一个回调函数供pcap库来进行回调 
+void dpi_pcap_callback(u_char *user,const struct pcap_pkthdr *header,
+        const u_char *data);
 
 //初始化dpi模块
 //pcap_file :pcap文件地址
@@ -35,6 +38,8 @@ dpi_result *dpi_init(const char *pcap_file,char *errbuf)
 //返回值，成功返回0，失败返回非0
 int dpi_pcap_analyze(dpi_result *handle)
 {
+    //遍历pcap文件去识别和统计报文
+    int res = pcap_loop(handle->pcap_handle,-1,dpi_pcap_callback,NULL);
     return 0;
 }
 
@@ -48,4 +53,12 @@ void dpi_free(dpi_result *res)
     pcap_close(res->pcap_handle);
     //释放整个 result 结构
     free(res);
+}
+
+
+//pcap回调函数的实现
+void dpi_pcap_callback(u_char *user,const struct pcap_pkthdr *header,
+        const u_char *data)
+{
+    DPI_LOG_DEBUG("dpi_pcap_callback\n");
 }

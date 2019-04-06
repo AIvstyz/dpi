@@ -37,17 +37,3 @@ int dpi_pcap_analyze(dpi_result *handle);
 //handle ：就是dpi_init 拿到的句柄
 void dpi_free(dpi_result *handle);
 
-//
-//    //3 业务处理（循环去读取每一个报文的packet header）
-//    //回调函数地址
-//    pcap_handler callback = pcap_callback_func;
-//    //用户自定义参数
-//    unsigned char user = 123;
-//    int res = pcap_loop(pcap,-1,callback,&user);
-//    if(res<0)
-//    {
-//        fprintf(stderr,"Error in pcap loop \n");
-//    }
-//
-//    //4 清理垃圾
-//    pcap_close(pcap);
