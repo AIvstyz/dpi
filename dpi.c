@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <string.h>
 #include <pcap/pcap.h>
+#include <arpa/inet.h>
 
 //定义一个回调函数供pcap库来进行回调 
 void dpi_pcap_callback(u_char *user,const struct pcap_pkthdr *header,
@@ -73,7 +74,7 @@ void dpi_pcap_callback(u_char *user,const struct pcap_pkthdr *header,
     }
 
     //标记以太网报文的起始位置
-    pkt.ether_pkt=(const struct ehter_header*)data; 
+    pkt.ether_pkt=(const struct ether_header*)data; 
     pkt.ether_len = header->caplen;
 
     //判断是否是ip报文
