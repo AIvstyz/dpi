@@ -78,6 +78,9 @@ enum dpi_protocol
 #ifndef DPI_NO_SSH_SUPPORT
     SSH,
 #endif
+    //Telnet,
+    //Http,
+    //FTP,
     ProtocolEnd
 };
 

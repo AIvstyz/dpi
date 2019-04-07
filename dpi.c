@@ -5,6 +5,17 @@
 #include <pcap/pcap.h>
 #include <arpa/inet.h>
 
+#ifndef DPI_NO_SSH_SUPPORT
+//ssh的检测函数
+int dpi_protocol_ssh_detect(dpi_pkt *pkt);
+#endif
+
+//登记SSH识别函数到函数指针数组中
+dpi_protocol_detect_func dpi_detect_func_arr[ProtocolEnd] ={
+#ifndef DPI_NO_SSH_SUPPORT
+    dpi_protocol_ssh_detect
+#endif
+};
 
 //解析ip报文的函数
 void dpi_pkt_ip_analyze(dpi_result *res,dpi_pkt *pkt);

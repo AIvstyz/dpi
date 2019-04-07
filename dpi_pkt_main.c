@@ -84,16 +84,21 @@ void dpi_pkt_tcp_analyze(dpi_result *res,dpi_pkt *pkt)
         return;
     }
 
-    //解析应用层协议
-    //if(判断是否是ssh协议报文)
-    //{
-    //    res->ssh_count ++ ;
-    //}
-    //if(判断是否是telnet协议报文)
-    //{
-    //    //....
-    //}
-    //if .....
+    //解析应用层协议，使用循环遍历数组的方式，调用每一个识别函数
+    int i;
+    for(i = 0 ; i< ProtocolEnd ; ++i )
+    {
+        if(dpi_detect_func_arr[i](pkt)==1)
+        {
+            //识别出了某个协议
+            //识别出来的协议的枚举值是 i
+            if(i==SSH)
+            {
+                DPI_LOG_DEBUG("Protocol is SSH\n");
+                res->ssh_count++;
+            }
+        }
+    }
 
 
 }

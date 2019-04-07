@@ -1,7 +1,7 @@
 #控制CMAKE最低版本号
 cmake_minimum_required(VERSION 3.2)
 #将当前目录的所有.c文件都存到srcs这个变量里边
-file(GLOB srcs ./*.c)
+file(GLOB srcs ./*.c ./protocol/*.c)
 
 include_directories(./)
 
