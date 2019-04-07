@@ -5,6 +5,10 @@
 #include <pcap/pcap.h>
 #include <arpa/inet.h>
 
+
+//解析ip报文的函数
+void dpi_pkt_ip_analyze(dpi_result *res,dpi_pkt *pkt);
+
 //定义一个回调函数供pcap库来进行回调 
 void dpi_pcap_callback(u_char *user,const struct pcap_pkthdr *header,
         const u_char *data);
@@ -80,14 +84,15 @@ void dpi_pcap_callback(u_char *user,const struct pcap_pkthdr *header,
     //判断是否是ip报文
     if(pkt.ether_pkt->ether_type == htons(ETHERTYPE_IP)) //0x0800
     {
-        //是ip报文
-        //统计ip报文的数量
+        //是ip报文,统计ip报文的数量
         res->ip_count++;
-        //解析ip报文
-    }
-    else
-    {
-        //不是ip报文
-    }
 
+        //ip报文的地址也要赋值
+        pkt.ip_pkt = (struct iphdr*)((char*)pkt.ether_pkt + sizeof(*pkt.ether_pkt));
+        //ip报文的长度等于以太网报文长度-以太网报头
+        pkt.ip_pkt_len = pkt.ether_len - sizeof(*pkt.ether_pkt);
+
+        //解析ip报文
+        dpi_pkt_ip_analyze(res,&pkt);
+    }
 }

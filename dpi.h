@@ -1,6 +1,10 @@
 #pragma once
 #include <stdint.h>
 #include <netinet/ether.h>
+#include <netinet/ip.h>
+#include <netinet/tcp.h>
+#include <netinet/udp.h>
+#include <stdio.h>
 
 #define DPI_ERR_BUFF_SIZE 256
 
@@ -20,16 +24,27 @@ typedef struct dpi_result
     //...
 }dpi_result;
 
+//定义结构体来标识一个报文每个协议的起始位置和长度
 typedef struct dpi_pkt
 {
     const struct ether_header *ether_pkt;           //以太网报文地址
     uint32_t ether_len;                             //以太网报文长度
-    const unsigned char *ip_pkt;              //ip报文地址
+    const struct iphdr *ip_pkt;              //ip报文地址
     uint32_t ip_pkt_len;                //ip报文长度
-    const unsigned char *tcp_pkt;             //tcp报文地址
-    uint32_t tcp_pkt_len;               //tcp报文长度
-    const unsigned char *udp_pkt;             //udp报文地址
-    uint32_t udp_pkt_len;               //udp报文长度
+    union
+    {
+        //共同体，如果是TCP报文，就不可能是UDP报文
+        struct
+        {
+            const struct tcphdr *tcp_pkt;             //tcp报文地址
+            uint32_t tcp_pkt_len;               //tcp报文长度
+        };
+        struct
+        {
+            const struct udphdr *udp_pkt;             //udp报文地址
+            uint32_t udp_pkt_len;               //udp报文长度
+        };
+    };
     const unsigned char *payload;             //应用层报文地址
     uint32_t payload_len;               //应用层报文长度
 }dpi_pkt;
