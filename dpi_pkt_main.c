@@ -1,5 +1,10 @@
 #include <dpi.h>
 
+//解析TCP报文的函数
+void dpi_pkt_tcp_analyze(dpi_result *res,dpi_pkt *pkt);
+//解析UDP报文的函数
+void dpi_pkt_udp_analyze(dpi_result *res,dpi_pkt *pkt);
+
 //解析ip报文的函数
 void dpi_pkt_ip_analyze(dpi_result *res,dpi_pkt *pkt)
 {
@@ -35,16 +40,59 @@ void dpi_pkt_ip_analyze(dpi_result *res,dpi_pkt *pkt)
             pkt->tcp_pkt = (struct tcphdr*)((char*)pkt->ip_pkt + ihl);
             //TCP报文的长度 = ip报文总长度 - ip报头长度
             pkt->tcp_pkt_len = ip_total_len - ihl;
+            if(pkt->tcp_pkt_len>0)
+            {
+                dpi_pkt_tcp_analyze(res,pkt);
+            }
             break;
         case IPPROTO_UDP://17
             //UDP报文解析
             res->udp_count++;
             pkt->udp_pkt = (struct udphdr*)((char*)pkt->ip_pkt + ihl);
             pkt->udp_pkt_len = ip_total_len - ihl;
+            if(pkt->udp_pkt_len>0)
+            {
+                dpi_pkt_udp_analyze(res,pkt);
+            }
             break;
         default:
             break;
     }
 
+
+}
+
+//解析TCP报文的函数
+void dpi_pkt_tcp_analyze(dpi_result *res,dpi_pkt *pkt)
+{
+    //TCP报文的长度至少是20
+    if(pkt->tcp_pkt_len<sizeof(struct tcphdr))
+    {
+        return;
+    }
+
+    //记住TCP报文的首部长度
+    size_t tcp_hl = pkt->tcp_pkt->doff << 2;
+
+    //计算数据区域的起始位置
+    pkt->payload = (unsigned char*)pkt->tcp_pkt + tcp_hl;
+    //计算数据区域的长度
+    pkt->payload_len = pkt->tcp_pkt_len - tcp_hl;
+        
+    //做保护，判断数据区域有没有数据
+    if(pkt->payload_len<=0)
+    {
+        //没有携带数据的tcp报文，比如握手包
+        return;
+    }
+
+    //解析应用层协议
+
+
+}
+
+//解析UDP报文的函数
+void dpi_pkt_udp_analyze(dpi_result *res,dpi_pkt *pkt)
+{
 
 }
