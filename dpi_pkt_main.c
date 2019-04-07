@@ -58,8 +58,6 @@ void dpi_pkt_ip_analyze(dpi_result *res,dpi_pkt *pkt)
         default:
             break;
     }
-
-
 }
 
 //解析TCP报文的函数
@@ -87,6 +85,15 @@ void dpi_pkt_tcp_analyze(dpi_result *res,dpi_pkt *pkt)
     }
 
     //解析应用层协议
+    //if(判断是否是ssh协议报文)
+    //{
+    //    res->ssh_count ++ ;
+    //}
+    //if(判断是否是telnet协议报文)
+    //{
+    //    //....
+    //}
+    //if .....
 
 
 }

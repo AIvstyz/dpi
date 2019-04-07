@@ -12,6 +12,7 @@
 #define DPI_LOG_INFO(...)  do{fprintf(stderr,__VA_ARGS__);}while(0)
 #define DPI_LOG_ERROR(...)  do{fprintf(stderr,__VA_ARGS__);}while(0)
 
+
 //定义dpi接口的头文件
 typedef struct dpi_result
 {
@@ -65,4 +66,22 @@ int dpi_pcap_analyze(dpi_result *handle);
 //释放的接口
 //handle ：就是dpi_init 拿到的句柄
 void dpi_free(dpi_result *handle);
+
+
+//定义协议识别函数类型,检测某个报文是否某个协议的报文是，返回1，否返回0，出错返回-1
+typedef int (*dpi_protocol_detect_func)(dpi_pkt *pkt);
+
+//定义支持的协议
+enum dpi_protocol
+{
+    ProtocolBegin=-1,
+#ifndef DPI_NO_SSH_SUPPORT
+    SSH,
+#endif
+    ProtocolEnd
+};
+
+//是dpi项目的协议识别函数指针数组
+extern dpi_protocol_detect_func dpi_detect_func_arr[ProtocolEnd];
+
 
